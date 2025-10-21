@@ -38,6 +38,12 @@ const menuData = [
 export default function MenuUMKM() {
   const { items, addItem, decreaseItem, setQty, removeItem, total } = useCart();
   const [notif, setNotif] = useState("");
+  const [dineInDate, setDineInDate] = useState("");
+  const [dineInTime, setDineInTime] = useState("");
+  // const isDineInTimeSet = dineInDate && dineInTime;
+  const getTodayDate = () => {
+    return new Date().toISOString().split("T")[0];
+  };
 
   const tambahKeranjang = (item) => {
     addItem(item, 1);
@@ -151,11 +157,42 @@ export default function MenuUMKM() {
               <span>Total:</span>
               <span className="font-mono tabular-nums">Rp{total.toLocaleString("id-ID")}</span>
             </div>
-
+<div className="mt-6 border-t pt-6">
+              <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                Pilih Waktu Dine-in
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="dineInDate" className="block text-sm font-medium text-gray-700 mb-1">
+                    Tanggal
+                  </label>
+                  <input
+                    type="date"
+                    id="dineInDate"
+                    value={dineInDate}
+                    onChange={(e) => setDineInDate(e.target.value)}
+                    min={getTodayDate()}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="dineInTime" className="block text-sm font-medium text-gray-700 mb-1">
+                    Jam
+                  </label>
+                  <input
+                    type="time"
+                    id="dineInTime"
+                    value={dineInTime}
+                    onChange={(e) => setDineInTime(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  />
+                </div>
+              </div>
+            </div>
             <div className="text-center mt-6">
               <Link
                 to="/checkout"
-                className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full hover:opacity-90 transition inline-block font-semibold"
+                className="bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full hover:opacity-90 transition inline-block font-semibold"
               >
                 Lanjut ke Checkout
               </Link>
