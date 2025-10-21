@@ -10,7 +10,7 @@ export default function SuccessPage() {
     startTimer();
     const timerHandle = setTimeout(() => {
       navigate("/timer");
-    }, 3000);
+    }, 1000);
     return () => clearTimeout(timerHandle);
   }, [navigate, startTimer]);
 
