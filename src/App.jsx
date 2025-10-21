@@ -4,9 +4,11 @@ import Home from "./pages/Home";
 import PilihTempat from "./pages/PilihTempat";
 import MenuUMKM from "./pages/MenuUMKM";
 import Checkout from "./pages/Checkout";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import { CartProvider, useCart } from "./context/CartContext";
+import Login from "./pages/Login";
+import AuthLayout from "./layouts/AuthLayout";
+import MainLayout from "./layouts/MainLayout";
+import Signup from "./pages/signup";
 
 function RequireCart({ children }) {
   const { count } = useCart();
@@ -16,11 +18,9 @@ function RequireCart({ children }) {
 function AppInner() {
   const location = useLocation();
 
-  // DEV: selalu tampilkan popup
-  // PROD: tampil sekali (pakai localStorage)
   const [showPilihTempat, setShowPilihTempat] = useState(() => {
     try {
-      if (import.meta.env.DEV) return true;                 // <-- perubahan utama
+      if (import.meta.env.DEV) return true;
       return !localStorage.getItem("pilihTempatSeen");
     } catch {
       return true;
@@ -28,50 +28,57 @@ function AppInner() {
   });
 
   const closePilihTempat = () => {
-    try { localStorage.setItem("pilihTempatSeen", "1"); } catch {}
+    try { localStorage.setItem("pilihTempatSeen", "1"); } catch { /* empty */ }
     setShowPilihTempat(false);
   };
 
-  // Otomatis tutup modal saat pindah halaman
   useEffect(() => {
     if (location.pathname !== "/" && showPilihTempat) {
       closePilihTempat();
     }
-  }, [location.pathname, showPilihTempat]); // tambahkan showPilihTempat di deps
+  }, [location.pathname, showPilihTempat]);
+
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900 relative">
-      <Navbar />
+    <>
+      {isAuthPage ? (
+        <AuthLayout>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Signup />} />
+          </Routes>
+        </AuthLayout>
+      ) : (
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/tempat"
+              element={<PilihTempat onClose={closePilihTempat} asModal={false} />}
+            />
+            <Route path="/menu" element={<MenuUMKM />} />
+            <Route
+              path="/checkout"
+              element={
+                <RequireCart>
+                  <Checkout />
+                </RequireCart>
+              }
+            />
+          </Routes>
 
-      {/* Offset untuk sticky navbar */}
-      <main className="flex-1 pt-16 md:pt-20">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/tempat"
-            element={<PilihTempat onClose={closePilihTempat} asModal={false} />}
-          />
-          <Route path="/menu" element={<MenuUMKM />} />
-          <Route
-            path="/checkout"
-            element={
-              <RequireCart>
-                <Checkout />
-              </RequireCart>
-            }
-          />
-        </Routes>
-      </main>
-
-      <Footer />
-
-      {/* Modal tampil hanya di halaman "/" */}
-      {location.pathname === "/" && showPilihTempat && (
-        <PilihTempat onClose={closePilihTempat} asModal />
+          {/* Modal tampil hanya di halaman "/" */}
+          {location.pathname === "/" && showPilihTempat && (
+            <PilihTempat onClose={closePilihTempat} asModal />
+          )}
+        </MainLayout>
       )}
-    </div>
+    </>
   );
 }
+
 
 export default function App() {
   return (
