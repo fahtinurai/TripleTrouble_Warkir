@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 export default function Checkout() {
   const { items, total, addItem, decreaseItem, setQty, removeItem, clearCart } = useCart();
   const navigate = useNavigate();
   const [metodeBayar, setMetodeBayar] = useState("");
+  const location = useLocation();
+  const { dineInDate, dineInTime, selectedTable } = location.state || {};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,7 +85,31 @@ export default function Checkout() {
             </span>
           </div>
         </div>
-
+        {/* Ringkasan Waktu & Meja */}
+<div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl mb-8">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Detail Dine-in</h2>
+          {dineInDate && dineInTime && selectedTable ? (
+            <>
+              <div className="space-y-2 text-gray-700">
+                <p><strong>Tanggal:</strong> {new Date(dineInDate).toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p><strong>Jam:</strong> {dineInTime}</p>
+                <p><strong>Meja:</strong> {selectedTable}</p>
+              </div>
+              
+              {/* [BARU] Peringatan Waktu Makan */}
+              <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-lg">
+                <p className="font-semibold">Perhatian:</p>
+                <p className="text-sm">Waktu maksimal untuk makan adalah 30 menit setelah pesanan diantarkan.</p>
+              </div>
+            </>
+          ) : (
+            <p className="text-gray-500">
+              Detail dine-in tidak ditemukan. Harap kembali ke{" "}
+              <Link to="/menu" className="text-purple-600 underline">halaman menu</Link>{" "}
+              dan pilih waktu serta meja.
+            </p>
+          )}
+        </div>
         {/* Form Pembayaran */}
         <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
           <fieldset className="space-y-3 text-gray-700">

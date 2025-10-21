@@ -40,7 +40,10 @@ export default function MenuUMKM() {
   const [notif, setNotif] = useState("");
   const [dineInDate, setDineInDate] = useState("");
   const [dineInTime, setDineInTime] = useState("");
-  // const isDineInTimeSet = dineInDate && dineInTime;
+  const [selectedTable, setSelectedTable] = useState("");
+  const tableOptions = ["Meja 1 (2 Orang)", "Meja 2 (2 Orang)", "Meja 3 (4 Orang)", "Meja 4 (4 Orang)", "Meja 5 (6 Orang)"];
+  const isReservationComplete = dineInDate && dineInTime && selectedTable;
+  const canCheckout = items.length > 0 && isReservationComplete;
   const getTodayDate = () => {
     return new Date().toISOString().split("T")[0];
   };
@@ -157,11 +160,12 @@ export default function MenuUMKM() {
               <span>Total:</span>
               <span className="font-mono tabular-nums">Rp{total.toLocaleString("id-ID")}</span>
             </div>
-<div className="mt-6 border-t pt-6">
+            {/* Pilih waktu & meja dine in */}
+            <div className="mt-6 border-t pt-6">
               <h3 className="text-lg font-semibold mb-3 text-gray-800">
-                Pilih Waktu Dine-in
+                Pilih Waktu & Meja Dine-in
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label htmlFor="dineInDate" className="block text-sm font-medium text-gray-700 mb-1">
                     Tanggal
@@ -187,12 +191,36 @@ export default function MenuUMKM() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
+                <div>
+                  <label htmlFor="dineInTable" className="block text-sm font-medium text-gray-700 mb-1">
+                    Meja
+                  </label>
+                  <select
+                    id="dineInTable"
+                    value={selectedTable}
+                    onChange={(e) => setSelectedTable(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                  >
+                    <option value="" disabled>Pilih meja</option>
+                    {tableOptions.map((table) => (
+                      <option key={table} value={table}>{table}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
             <div className="text-center mt-6">
               <Link
                 to="/checkout"
-                className="bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full hover:opacity-90 transition inline-block font-semibold"
+                state={{ dineInDate, dineInTime, selectedTable }}
+                className={`bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full hover:opacity-90 transition inline-block font-semibold
+                  ${!canCheckout ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
+                onClick={(e) => {
+                  if (!canCheckout) {
+                    e.preventDefault();
+                    alert("Harap lengkapi tanggal, jam, dan pilihan meja untuk dine-in.");
+                  }
+                }}
               >
                 Lanjut ke Checkout
               </Link>
