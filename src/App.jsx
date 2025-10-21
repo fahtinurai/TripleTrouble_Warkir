@@ -9,6 +9,9 @@ import Login from "./pages/Login";
 import AuthLayout from "./layouts/AuthLayout";
 import MainLayout from "./layouts/MainLayout";
 import Signup from "./pages/signup";
+import SuccessPage from "./pages/SuccessPage";
+import TimerPage from "./pages/TimerPage";
+import { TimerProvider } from "./context/TimerContext";
 
 function RequireCart({ children }) {
   const { count } = useCart();
@@ -67,6 +70,8 @@ function AppInner() {
                 </RequireCart>
               }
             />
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/timer" element={<TimerPage />} />
           </Routes>
 
           {/* Modal tampil hanya di halaman "/" */}
@@ -84,7 +89,9 @@ export default function App() {
   return (
     <Router>
       <CartProvider>
-        <AppInner />
+        <TimerProvider>
+           <AppInner />
+        </TimerProvider>
       </CartProvider>
     </Router>
   );

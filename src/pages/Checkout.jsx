@@ -12,9 +12,9 @@ export default function Checkout() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!metodeBayar) return;
-    alert("Pesanan berhasil dikonfirmasi 🎉");
-    clearCart();
-    navigate("/");
+    // alert("Pesanan berhasil dikonfirmasi 🎉");
+    // clearCart();
+    navigate("/success");
   };
 
   return (
@@ -142,7 +142,7 @@ export default function Checkout() {
             </Link>
             <button
               type="submit"
-              disabled={!metodeBayar || items.length === 0}
+              disabled={!metodeBayar || items.length === 0 || !selectedTable}
               className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
               Konfirmasi Pesanan

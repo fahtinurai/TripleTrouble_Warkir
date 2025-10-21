@@ -213,7 +213,7 @@ export default function MenuUMKM() {
               <Link
                 to="/checkout"
                 state={{ dineInDate, dineInTime, selectedTable }}
-                className={`bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full hover:opacity-90 transition inline-block font-semibold
+                className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90
                   ${!canCheckout ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
                 onClick={(e) => {
                   if (!canCheckout) {
