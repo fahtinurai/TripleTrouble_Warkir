@@ -11,7 +11,6 @@ export default function Checkout() {
 
   const handleSubmit = (e) => {
   e.preventDefault();
-
   if (!metodeBayar) return;
   navigate("/success", { state: { justCheckedOut: true } });
 };
