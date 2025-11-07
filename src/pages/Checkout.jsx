@@ -3,19 +3,18 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 export default function Checkout() {
-  const { items, total, addItem, decreaseItem, setQty, removeItem, clearCart } = useCart();
+  const { items, total, addItem, decreaseItem, setQty, removeItem } = useCart();
   const navigate = useNavigate();
   const [metodeBayar, setMetodeBayar] = useState("");
   const location = useLocation();
   const { dineInDate, dineInTime, selectedTable } = location.state || {};
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!metodeBayar) return;
-    // alert("Pesanan berhasil dikonfirmasi 🎉");
-    // clearCart();
-    navigate("/success");
-  };
+  e.preventDefault();
+
+  if (!metodeBayar) return;
+  navigate("/success", { state: { justCheckedOut: true } });
+};
 
   return (
     <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100">

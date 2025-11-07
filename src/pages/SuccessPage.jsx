@@ -1,13 +1,16 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTimer } from "../context/TimerContext";
+import { useCart } from "../context/CartContext";
 
 export default function SuccessPage() {
   const navigate = useNavigate();
   const { startTimer } = useTimer();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     startTimer();
+    clearCart()
     const timerHandle = setTimeout(() => {
       navigate("/timer");
     }, 1000);
