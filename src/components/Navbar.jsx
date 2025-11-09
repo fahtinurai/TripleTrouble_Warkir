@@ -1,45 +1,51 @@
 import { Link } from "react-router-dom";
-
+import { FaCircle } from "react-icons/fa";
 
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 bg-[#338595] text-white shadow-lg">
-      <div className="container mx-auto px-6 h-16 md:h-20 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-extrabold tracking-wide drop-shadow-sm">
-          Warkir.com
-        </Link>
+    <div className="bg-[#3DA3B0] w-full pb-6">
+      <nav className="sticky top-0 z-50 w-full bg-[#3DA3B0] text-white">
+        <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <FaCircle className="text-gray-300 text-3xl" />
+            <Link to="/" className="text-xl font-bold">
+              Warkir.com
+            </Link>
+          </div>
 
-        {/* Menu desktop */}
-        <ul className="hidden md:flex gap-8 text-base font-medium">
-          <li><Link className="hover:text-yellow-300 transition" to="/">Beranda</Link></li>
-          <li><Link className="hover:text-yellow-300 transition" to="/tempat">Jenis Order</Link></li>
-          <li><Link className="hover:text-yellow-300 transition" to="/menu">Menu UMKM</Link></li>
-          <li><Link className="hover:text-yellow-300 transition" to="/checkout">Order</Link></li>
-        </ul>
+          {/* Menu */}
+          <ul className="hidden md:flex items-center gap-12 text-base font-semibold">
+            <li>
+              <Link to="/" className="hover:underline">
+                Beranda
+              </Link>
+            </li>
+            <li>
+              <Link to="/tempat" className="hover:underline">
+                Pilih Tempat
+              </Link>
+            </li>
+            <li>
+              <Link to="/menu" className="hover:underline">
+                Menu UMKM
+              </Link>
+            </li>
+            <li>
+              <Link to="/checkout" className="hover:underline">
+                Order
+              </Link>
+            </li>
+          </ul>
 
-        {/* Action */}
-        <div className="hidden md:flex gap-3">
-           <Link to="/login">
-            <button className="bg-[#207DC5] text-white font-semibold px-4 py-2 rounded-lg transition">
-              Masuk
+          {/* Tombol Login */}
+          <Link to="/login">
+            <button className="bg-[#2C84C8] text-white font-semibold px-6 py-2 rounded-md shadow-md hover:brightness-110 transition">
+              Login
             </button>
           </Link>
-          <Link to="/register">
-          <button className="border  border-gray-300 text-white font-semibold px-4 py-2 rounded-lg transition">
-      Daftar
-    </button>
-          </Link>
         </div>
-      </div>
-
-      {/* Menu mobile */}
-      <div className="md:hidden text-center text-sm py-2 bg-white/10 backdrop-blur-sm">
-        <Link to="/" className="mx-2 hover:text-yellow-200">Beranda</Link>•
-        <Link to="/tempat" className="mx-2 hover:text-yellow-200">Tempat</Link>•
-        <Link to="/menu" className="mx-2 hover:text-yellow-200">Menu</Link>•
-        <Link to="/checkout" className="mx-2 hover:text-yellow-200">Checkout</Link>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

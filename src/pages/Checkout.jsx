@@ -7,13 +7,66 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [metodeBayar, setMetodeBayar] = useState("");
   const location = useLocation();
-  const { dineInDate, dineInTime, selectedTable } = location.state || {};
+
+  // Ambil data dari MenuUMKM → dineInDate, dineInTime, selectedTable, orderType
+  const {
+    dineInDate,
+    dineInTime,
+    selectedTable,
+    orderType = "dine-in",
+  } = location.state || {};
+
+  const isDineIn = orderType === "dine-in";
+
+  // Fungsi tentukan status awal pembayaran
+  const getInitialStatus = (metode) => {
+    if (metode === "cash") return "BELUM BAYAR (CASH)";
+    if (metode === "qris") return "LUNAS (QRIS)";
+    if (metode === "transfer") return "LUNAS (TRANSFER)";
+    return "BELUM BAYAR";
+  };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  if (!metodeBayar) return;
-  navigate("/success", { state: { justCheckedOut: true } });
-};
+    e.preventDefault();
+
+    if (!metodeBayar) return alert("Pilih metode pembayaran terlebih dahulu!");
+    if (items.length === 0) return alert("Keranjang masih kosong!");
+
+    // Hanya dine-in yang wajib pilih meja
+    if (isDineIn && !selectedTable) {
+      alert("Silakan pilih meja terlebih dahulu untuk dine-in.");
+      return;
+    }
+
+    const paymentId =
+      window.crypto?.randomUUID?.() || `TRX-${Date.now().toString()}`;
+
+    const paymentData = {
+      id: paymentId,
+      items,
+      total,
+      metodeBayar,
+      orderType, // dine-in atau takeaway
+      dineInDate: isDineIn ? dineInDate : null,
+      dineInTime: isDineIn ? dineInTime : null,
+      selectedTable: isDineIn ? selectedTable : null,
+      statusPembayaran: getInitialStatus(metodeBayar),
+      createdAt: new Date().toISOString(),
+    };
+
+    const existingPayments = JSON.parse(
+      localStorage.getItem("payments") || "[]"
+    );
+    existingPayments.push(paymentData);
+    localStorage.setItem("payments", JSON.stringify(existingPayments));
+
+    navigate("/success", {
+      state: {
+        justCheckedOut: true,
+        paymentId,
+      },
+    });
+  };
 
   return (
     <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100">
@@ -22,13 +75,18 @@ export default function Checkout() {
           Checkout Pesanan
         </h1>
 
-        {/* Ringkasan */}
+        {/* Ringkasan Pesanan */}
         <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Ringkasan Pesanan</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            Ringkasan Pesanan
+          </h2>
 
           <ul className="divide-y">
             {items.map((item) => (
-              <li key={item.id} className="py-3 flex flex-wrap items-center justify-between gap-4 text-gray-700">
+              <li
+                key={item.id}
+                className="py-3 flex flex-wrap items-center justify-between gap-4 text-gray-700"
+              >
                 <div className="min-w-0 flex-1">
                   <div className="font-medium">{item.nama}</div>
                   <div className="text-sm text-gray-500">
@@ -83,41 +141,78 @@ export default function Checkout() {
             </span>
           </div>
         </div>
-        {/* Ringkasan Waktu & Meja */}
-<div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Detail Dine-in</h2>
-          {dineInDate && dineInTime && selectedTable ? (
-            <>
-              <div className="space-y-2 text-gray-700">
-                <p><strong>Tanggal:</strong> {new Date(dineInDate).toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <p><strong>Jam:</strong> {dineInTime}</p>
-                <p><strong>Meja:</strong> {selectedTable}</p>
-              </div>
-              
-              {/* [BARU] Peringatan Waktu Makan */}
-              <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-lg">
-                <p className="font-semibold">Perhatian:</p>
-                <p className="text-sm">Waktu maksimal untuk makan adalah 30 menit setelah pesanan diantarkan.</p>
-              </div>
-            </>
+
+        {/* Detail Dine-in / Takeaway */}
+        <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl mb-8">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            {isDineIn ? "Detail Dine-in" : "Detail Pesanan Take Away"}
+          </h2>
+
+          {isDineIn ? (
+            dineInDate && dineInTime && selectedTable ? (
+              <>
+                <div className="space-y-2 text-gray-700">
+                  <p>
+                    <strong>Tanggal:</strong>{" "}
+                    {new Date(dineInDate).toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <p>
+                    <strong>Jam:</strong> {dineInTime}
+                  </p>
+                  <p>
+                    <strong>Meja:</strong> {selectedTable}
+                  </p>
+                </div>
+
+                <div className="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-lg">
+                  <p className="font-semibold">Perhatian:</p>
+                  <p className="text-sm">
+                    Waktu maksimal makan adalah 30 menit setelah pesanan
+                    diantarkan.
+                  </p>
+                </div>
+              </>
+            ) : (
+              <p className="text-gray-500">
+                Detail dine-in tidak lengkap. Harap kembali ke{" "}
+                <Link to="/menu" className="text-purple-600 underline">
+                  halaman menu
+                </Link>{" "}
+                dan pilih tanggal, jam, serta meja.
+              </p>
+            )
           ) : (
-            <p className="text-gray-500">
-              Detail dine-in tidak ditemukan. Harap kembali ke{" "}
-              <Link to="/menu" className="text-purple-600 underline">halaman menu</Link>{" "}
-              dan pilih waktu serta meja.
+            <p className="text-gray-700">
+              Pesanan ini bertipe <b>Take Away</b>. Pesanan akan disiapkan untuk
+              dibawa pulang tanpa batas waktu makan.
             </p>
           )}
         </div>
+
         {/* Form Pembayaran */}
-        <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl"
+        >
           <fieldset className="space-y-3 text-gray-700">
-            <legend className="text-xl font-semibold mb-4 text-gray-800">Pilih Metode Pembayaran</legend>
-            {[
-              { value: "cash",     label: "💵 Bayar di Tempat (Cash)" },
-              { value: "qris",     label: "📱 QRIS" },
+            <legend className="text-xl font-semibold mb-4 text-gray-800">
+              Pilih Metode Pembayaran
+            </legend>
+
+            {[ 
+              { value: "cash", label: "💵 Bayar di Tempat (Cash)" },
+              { value: "qris", label: "📱 QRIS" },
               { value: "transfer", label: "🏦 Transfer Bank" },
             ].map((opt) => (
-              <label key={opt.value} className="flex items-center gap-3 cursor-pointer">
+              <label
+                key={opt.value}
+                className="flex items-center gap-3 cursor-pointer"
+              >
                 <input
                   type="radio"
                   name="metode"
@@ -138,9 +233,14 @@ export default function Checkout() {
             >
               Kembali
             </Link>
+
             <button
               type="submit"
-              disabled={!metodeBayar || items.length === 0 || !selectedTable}
+              disabled={
+                !metodeBayar ||
+                items.length === 0 ||
+                (isDineIn && !selectedTable)
+              }
               className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
               Konfirmasi Pesanan

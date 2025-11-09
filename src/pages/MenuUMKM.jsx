@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 const menuData = [
@@ -41,9 +41,27 @@ export default function MenuUMKM() {
   const [dineInDate, setDineInDate] = useState("");
   const [dineInTime, setDineInTime] = useState("");
   const [selectedTable, setSelectedTable] = useState("");
-  const tableOptions = ["Meja 1 (2 Orang)", "Meja 2 (2 Orang)", "Meja 3 (4 Orang)", "Meja 4 (4 Orang)", "Meja 5 (6 Orang)"];
-  const isReservationComplete = dineInDate && dineInTime && selectedTable;
+
+  const location = useLocation();
+  // datang dari PilihTempat: state.orderType = "dine-in" | "takeaway"
+  const orderType = location.state?.orderType || "dine-in";
+  const isDineIn = orderType === "dine-in";
+
+  const tableOptions = [
+    "Meja 1 (2 Orang)",
+    "Meja 2 (2 Orang)",
+    "Meja 3 (4 Orang)",
+    "Meja 4 (4 Orang)",
+    "Meja 5 (6 Orang)",
+  ];
+
+  // dine-in wajib isi tanggal + jam + meja, takeaway tidak perlu
+  const isReservationComplete = isDineIn
+    ? dineInDate && dineInTime && selectedTable
+    : true;
+
   const canCheckout = items.length > 0 && isReservationComplete;
+
   const getTodayDate = () => {
     return new Date().toISOString().split("T")[0];
   };
@@ -68,13 +86,17 @@ export default function MenuUMKM() {
               key={umkm.id}
               className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-transform hover:-translate-y-1"
             >
-              <h2 className="text-xl font-bold text-gray-800 mb-1">{umkm.namaUMKM}</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-1">
+                {umkm.namaUMKM}
+              </h2>
               <p className="text-sm text-gray-500 mb-4">{umkm.kategori}</p>
               <ul>
                 {umkm.menu.map((item, i, arr) => (
                   <li
                     key={item.id}
-                    className={`flex justify-between items-center py-2 border-b ${i === arr.length - 1 ? "border-b-0" : ""}`}
+                    className={`flex justify-between items-center py-2 border-b ${
+                      i === arr.length - 1 ? "border-b-0" : ""
+                    }`}
                   >
                     <span className="text-gray-700">{item.nama}</span>
                     <div className="flex items-center gap-3">
@@ -106,7 +128,10 @@ export default function MenuUMKM() {
 
             <ul className="divide-y">
               {items.map((item) => (
-                <li key={item.id} className="py-3 flex flex-wrap items-center justify-between gap-4 text-gray-700">
+                <li
+                  key={item.id}
+                  className="py-3 flex flex-wrap items-center justify-between gap-4 text-gray-700"
+                >
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{item.nama}</div>
                     <div className="text-sm text-gray-500">
@@ -128,7 +153,9 @@ export default function MenuUMKM() {
                       type="number"
                       min={0}
                       value={item.qty}
-                      onChange={(e) => setQty(item.id, Number(e.target.value))}
+                      onChange={(e) =>
+                        setQty(item.id, Number(e.target.value))
+                      }
                     />
                     <button
                       onClick={() => addItem(item, 1)}
@@ -158,67 +185,109 @@ export default function MenuUMKM() {
 
             <div className="flex justify-between mt-5 font-bold text-gray-800 text-lg">
               <span>Total:</span>
-              <span className="font-mono tabular-nums">Rp{total.toLocaleString("id-ID")}</span>
+              <span className="font-mono tabular-nums">
+                Rp{total.toLocaleString("id-ID")}
+              </span>
             </div>
-            {/* Pilih waktu & meja dine in */}
-            <div className="mt-6 border-t pt-6">
-              <h3 className="text-lg font-semibold mb-3 text-gray-800">
-                Pilih Waktu & Meja Dine-in
-              </h3>
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="dineInDate" className="block text-sm font-medium text-gray-700 mb-1">
-                    Tanggal
-                  </label>
-                  <input
-                    type="date"
-                    id="dineInDate"
-                    value={dineInDate}
-                    onChange={(e) => setDineInDate(e.target.value)}
-                    min={getTodayDate()}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="dineInTime" className="block text-sm font-medium text-gray-700 mb-1">
-                    Jam
-                  </label>
-                  <input
-                    type="time"
-                    id="dineInTime"
-                    value={dineInTime}
-                    onChange={(e) => setDineInTime(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="dineInTable" className="block text-sm font-medium text-gray-700 mb-1">
-                    Meja
-                  </label>
-                  <select
-                    id="dineInTable"
-                    value={selectedTable}
-                    onChange={(e) => setSelectedTable(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  >
-                    <option value="" disabled>Pilih meja</option>
-                    {tableOptions.map((table) => (
-                      <option key={table} value={table}>{table}</option>
-                    ))}
-                  </select>
+
+            {/* Bagian reservasi: hanya untuk DINE-IN */}
+            {isDineIn ? (
+              <div className="mt-6 border-t pt-6">
+                <h3 className="text-lg font-semibold mb-3 text-gray-800">
+                  Pilih Waktu & Meja Dine-in
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label
+                      htmlFor="dineInDate"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Tanggal
+                    </label>
+                    <input
+                      type="date"
+                      id="dineInDate"
+                      value={dineInDate}
+                      onChange={(e) => setDineInDate(e.target.value)}
+                      min={getTodayDate()}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="dineInTime"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Jam
+                    </label>
+                    <input
+                      type="time"
+                      id="dineInTime"
+                      value={dineInTime}
+                      onChange={(e) => setDineInTime(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="dineInTable"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Meja
+                    </label>
+                    <select
+                      id="dineInTable"
+                      value={selectedTable}
+                      onChange={(e) => setSelectedTable(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    >
+                      <option value="" disabled>
+                        Pilih meja
+                      </option>
+                      {tableOptions.map((table) => (
+                        <option key={table} value={table}>
+                          {table}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="mt-6 border-t pt-6">
+                <h3 className="text-lg font-semibold mb-2 text-gray-800">
+                  Pesanan Take Away
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Pesanan Anda akan disiapkan untuk <b>dibawa pulang</b>.
+                  Anda tidak perlu memilih tanggal, jam, atau meja.
+                </p>
+              </div>
+            )}
+
             <div className="text-center mt-6">
               <Link
                 to="/checkout"
-                state={{ dineInDate, dineInTime, selectedTable }}
+                state={
+                  isDineIn
+                    ? {
+                        orderType: "dine-in",
+                        dineInDate,
+                        dineInTime,
+                        selectedTable,
+                      }
+                    : {
+                        orderType: "takeaway",
+                      }
+                }
                 className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90
                   ${!canCheckout ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
                 onClick={(e) => {
-                  if (!canCheckout) {
+                  if (!canCheckout && isDineIn) {
                     e.preventDefault();
-                    alert("Harap lengkapi tanggal, jam, dan pilihan meja untuk dine-in.");
+                    alert(
+                      "Harap lengkapi tanggal, jam, dan pilihan meja untuk dine-in."
+                    );
                   }
                 }}
               >

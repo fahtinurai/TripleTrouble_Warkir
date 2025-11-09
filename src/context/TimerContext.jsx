@@ -1,27 +1,36 @@
 import { createContext, useContext, useState, useEffect } from "react";
+
+const TimerContext = createContext(null);
+
+// hook untuk dipakai di komponen
 export const useTimer = () => useContext(TimerContext);
 
-const TimerContext = createContext();
-
-const DEFAULT_TIME = 1800; 
+const DEFAULT_TIME = 1800; // 30 menit
 
 export const TimerProvider = ({ children }) => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    let interval = null;
-    
-    if (isActive && remainingTime > 0) {
-      interval = setInterval(() => {
-        setRemainingTime((prev) => prev - 1);
-      }, 1000);
-    } else if (remainingTime === 0) {
-      clearInterval(interval);
+    // kalau tidak aktif, jangan buat interval
+    if (!isActive) return;
+    if (remainingTime <= 0) {
       setIsActive(false);
+      return;
     }
 
-    return () => clearInterval(interval);
+    const intervalId = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev <= 1) {
+          // waktu habis
+          setIsActive(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, [isActive, remainingTime]);
 
   const startTimer = () => {
@@ -34,10 +43,10 @@ export const TimerProvider = ({ children }) => {
     setIsActive(false);
   };
 
-  // Fungsi helper untuk format MM:SS
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const safe = Math.max(0, seconds);
+    const mins = Math.floor(safe / 60);
+    const secs = safe % 60;
     return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
