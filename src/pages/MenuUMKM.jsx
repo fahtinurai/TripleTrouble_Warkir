@@ -73,7 +73,7 @@ export default function MenuUMKM() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+    <div className="bg-white min-h-screen py-8">
       <div className="container mx-auto px-6 py-12">
         <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
           Pilih Menu UMKM
@@ -100,12 +100,12 @@ export default function MenuUMKM() {
                   >
                     <span className="text-gray-700">{item.nama}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-purple-600 font-semibold font-mono tabular-nums min-w-[8ch] text-right">
+                      <span className="text-color font-semibold font-mono tabular-nums min-w-[8ch] text-right">
                         Rp{item.harga.toLocaleString("id-ID")}
                       </span>
                       <button
                         onClick={() => tambahKeranjang(item)}
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-2 rounded-md hover:opacity-90 transition"
+                        className="bg-[#3DA3B0] text-white px-3 py-2 rounded-md hover:opacity-90 transition"
                         title="Tambah ke keranjang"
                         aria-label={`Tambah ${item.nama} ke keranjang`}
                       >
@@ -123,7 +123,7 @@ export default function MenuUMKM() {
         {items.length > 0 && (
           <div className="mt-16 bg-white p-6 rounded-2xl shadow-lg max-w-3xl mx-auto">
             <h2 className="text-2xl font-extrabold mb-4 text-center text-gray-800">
-              🛍️ Keranjang Pesanan
+              Keranjang Pesanan
             </h2>
 
             <ul className="divide-y">
@@ -159,7 +159,7 @@ export default function MenuUMKM() {
                     />
                     <button
                       onClick={() => addItem(item, 1)}
-                      className="w-8 h-8 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                      className="w-8 h-8 rounded-md bg-[#3DA3B0] text-white hover:bg-[#3DA3B0]"
                       title="Tambah"
                     >
                       +
@@ -173,7 +173,7 @@ export default function MenuUMKM() {
                     </div>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="px-2 py-1 rounded-md bg-red-100 text-red-700 hover:bg-red-200"
+                      className="px-2 py-1 rounded-md "
                       title="Hapus item"
                     >
                       🗑️
@@ -210,7 +210,7 @@ export default function MenuUMKM() {
                       value={dineInDate}
                       onChange={(e) => setDineInDate(e.target.value)}
                       min={getTodayDate()}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-[#3DA3B0]"
                     />
                   </div>
                   <div>
@@ -225,7 +225,7 @@ export default function MenuUMKM() {
                       id="dineInTime"
                       value={dineInTime}
                       onChange={(e) => setDineInTime(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-[#3DA3B0]"
                     />
                   </div>
                   <div>
@@ -239,7 +239,7 @@ export default function MenuUMKM() {
                       id="dineInTable"
                       value={selectedTable}
                       onChange={(e) => setSelectedTable(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-[#3DA3B0]"
                     >
                       <option value="" disabled>
                         Pilih meja
@@ -280,7 +280,7 @@ export default function MenuUMKM() {
                         orderType: "takeaway",
                       }
                 }
-                className={`bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90
+                className={`bg-[#3DA3B0] !text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed  hover:!text-white hover:opacity-90
                   ${!canCheckout ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
                 onClick={(e) => {
                   if (!canCheckout && isDineIn) {
@@ -292,7 +292,7 @@ export default function MenuUMKM() {
                 }}
               >
                 Lanjut ke Checkout
-              </Link>
+              </Link> 
             </div>
           </div>
         )}
