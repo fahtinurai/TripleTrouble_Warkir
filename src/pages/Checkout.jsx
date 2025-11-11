@@ -69,7 +69,6 @@ export default function Checkout() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100">
       <div className="container mx-auto px-6 py-12 flex flex-col items-center">
         <h1 className="text-4xl font-extrabold mb-8 text-gray-800 text-center">
           Checkout Pesanan
@@ -111,7 +110,7 @@ export default function Checkout() {
                   />
                   <button
                     onClick={() => addItem(item, 1)}
-                    className="w-8 h-8 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                    className="w-8 h-8 rounded-md bg-[#3DA3B0] hover:bg-[#359299] text-white"
                     title="Tambah"
                   >
                     +
@@ -124,7 +123,7 @@ export default function Checkout() {
                   </div>
                   <button
                     onClick={() => removeItem(item.id)}
-                    className="px-2 py-1 rounded-md bg-red-100 text-red-700 hover:bg-red-200"
+                    className="px-2 py-1 rounded-md"
                     title="Hapus item"
                   >
                     🗑️
@@ -134,7 +133,7 @@ export default function Checkout() {
             ))}
           </ul>
 
-          <div className="flex justify-between mt-5 font-bold text-lg text-purple-700">
+          <div className="flex justify-between mt-5 font-bold text-lg text-[#3DA3B0]">
             <span>Total:</span>
             <span className="font-mono tabular-nums">
               Rp{total.toLocaleString("id-ID")}
@@ -180,7 +179,7 @@ export default function Checkout() {
             ) : (
               <p className="text-gray-500">
                 Detail dine-in tidak lengkap. Harap kembali ke{" "}
-                <Link to="/menu" className="text-purple-600 underline">
+                <Link to="/menu" className="text-black underline">
                   halaman menu
                 </Link>{" "}
                 dan pilih tanggal, jam, serta meja.
@@ -241,13 +240,12 @@ export default function Checkout() {
                 items.length === 0 ||
                 (isDineIn && !selectedTable)
               }
-              className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+              className="bg-[#3DA3B0] text-white px-6 py-3 rounded-lg transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
             >
               Konfirmasi Pesanan
             </button>
           </div>
         </form>
       </div>
-    </div>
   );
 }
