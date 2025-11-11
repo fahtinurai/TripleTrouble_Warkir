@@ -10,8 +10,8 @@ export default function TimerPage() {
   // Kalau waktu sudah habis → tampilkan pesan habis, jangan redirect
   if (isExpired) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
-        <h1 className="text-3xl font-semibold mb-4 text-gray-400">
+      <div className="flex flex-col items-center justify-center min-h-screen text-white p-6">
+        <h1 className="text-3xl font-semibold mb-4 text-gray-800">
           Waktu Dine-in Anda Telah Habis
         </h1>
         <p className="text-2xl text-red-500 mt-6 animate-pulse">
@@ -19,7 +19,7 @@ export default function TimerPage() {
         </p>
         <Link
           to="/menu"
-          className="mt-12 bg-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-purple-700 transition"
+          className="mt-12 bg-[#3DA3B0] text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-[#3DA3B0] transition"
         >
           Kembali ke Menu
         </Link>
@@ -35,22 +35,22 @@ export default function TimerPage() {
 
   // Normal: timer sedang berjalan untuk dine-in
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
-      <h1 className="text-3xl font-semibold mb-4 text-gray-400">
+    <div className="flex flex-col items-center justify-center min-h-screen  text-white p-6">
+      <h1 className="text-3xl font-semibold mb-4 text-gray-800">
         Sisa Waktu Dine-in Anda
       </h1>
 
-      <div className="font-mono text-9xl font-bold tabular-nums">
+      <div className="font-mono text-9xl font-bold tabular-nums text-gray-800">
         {formatTime(remainingTime)}
       </div>
 
-      <p className="text-lg text-gray-300 mt-6">
+      <p className="text-lg text-gray-500 mt-6">
         Waktu maksimal makan adalah 30 menit.
       </p>
 
       <Link
         to="/menu"
-        className="mt-12 bg-purple-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-purple-700 transition"
+        className="mt-12 bg-[#3DA3B0] text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-[#3DA3B0]transition"
       >
         Kembali ke Menu
       </Link>
