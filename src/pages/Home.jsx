@@ -109,13 +109,15 @@ export default function Home() {
                   </p>
                 </div>
 
-                <Link
+               <div className="text-gray-800">
+                 <Link
                   to="/menu"
-                  className="inline-flex items-center gap-2 bg-teal-600 text-white text-xs md:text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-teal-700 transition"
+                  className="inline-flex items-center gap-2 bg-teal-600 !text-white text-xs md:text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-teal-700 transition "
                 >
                   Lihat menu
-                  <span>🍽️</span>
+            
                 </Link>
+               </div>
               </div>
             </div>
           ))}
