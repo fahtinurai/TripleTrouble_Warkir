@@ -237,7 +237,7 @@ export default function MenuUMKM() {
                   customerName, // ⬅️ juga dikirim untuk takeaway
                 }
           }
-          className={`bg-[#3DA3B0] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 ${
+          className={`bg-[#3DA3B0] !text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 ${
             !canCheckout ? "opacity-50 pointer-events-none" : ""
           }`}
           onClick={(e) => {
