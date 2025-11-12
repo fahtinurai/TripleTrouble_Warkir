@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaCircle } from "react-icons/fa";
+import WarkirLogo from '../assets/icons/icon_warkir.svg';
 
 export default function Navbar() {
   return (
@@ -8,10 +8,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-10 h-20 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <FaCircle className="text-gray-300 text-3xl" />
-            <Link to="/" className="text-xl font-bold">
-              Warkir.com
-            </Link>
+             <img src={WarkirLogo} alt="warkir logo" className="w-[150px] h-[50px] object-contain" />
           </div>
 
           {/* Menu */}
