@@ -89,7 +89,7 @@ export default function Navbar() {
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
 
-                    <ul className="py-2">
+                    {/* <ul className="py-2">
                       <li>
                         <Link
                           to="/profile"
@@ -106,7 +106,7 @@ export default function Navbar() {
                           Pengaturan Akun
                         </Link>
                       </li>
-                    </ul>
+                    </ul> */}
 
                     <button
                       onClick={logout}
