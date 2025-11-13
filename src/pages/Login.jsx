@@ -1,9 +1,26 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const fakeUser = {
+      name: "warkir user",
+      email: "warkir@gmail.com",
+      password: "password123",
+    };
+
+    login(fakeUser); // simpan ke session & global state
+    navigate("/");
+  }
 
   return (
     <>
@@ -27,7 +44,7 @@ function Login() {
       </div>
 
       {/* Form */}
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Email */}
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
