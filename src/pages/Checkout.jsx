@@ -1,23 +1,33 @@
-import { useState } from "react";
+// src/pages/Checkout.jsx
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 export default function Checkout() {
   const { items, total, addItem, decreaseItem, setQty, removeItem } = useCart();
   const navigate = useNavigate();
-  const [metodeBayar, setMetodeBayar] = useState("");
   const location = useLocation();
 
   // Ambil data dari MenuUMKM.jsx
   const {
-    customerName,      // ⬅️ nama pemesan dikirim dari MenuUMKM.jsx
+    customerName: initialCustomerName, // nama pemesan dari MenuUMKM (bila ada)
     dineInDate,
     dineInTime,
     selectedTable,
     orderType = "dine-in",
   } = location.state || {};
 
+  const [metodeBayar, setMetodeBayar] = useState("");
+  // sekarang customerName bisa diedit di sini, tapi defaultnya ambil dari location.state
+  const [customerName, setCustomerName] = useState(initialCustomerName || "");
   const isDineIn = orderType === "dine-in";
+
+  useEffect(() => {
+    // Jika user tiba di halaman ini tanpa items, redirect
+    if (!items || items.length === 0) {
+      navigate("/menu", { replace: true });
+    }
+  }, [items, navigate]);
 
   // Fungsi status awal pembayaran
   const getInitialStatus = (metode) => {
@@ -47,7 +57,7 @@ export default function Checkout() {
       total,
       metodeBayar,
       orderType,
-      customerName: customerName || "Tanpa Nama", // ⬅️ disimpan juga
+      customerName: customerName || "Tanpa Nama", // simpan apa adanya
       dineInDate: isDineIn ? dineInDate : null,
       dineInTime: isDineIn ? dineInTime : null,
       selectedTable: isDineIn ? selectedTable : null,
@@ -61,11 +71,9 @@ export default function Checkout() {
     existingPayments.push(paymentData);
     localStorage.setItem("payments", JSON.stringify(existingPayments));
 
-    navigate("/success", {
-      state: {
-        justCheckedOut: true,
-        paymentId,
-      },
+    // navigate: sertakan paymentId di query agar SuccessPage tetap bisa load walau di-refresh
+    navigate(`/success?paymentId=${encodeURIComponent(paymentId)}`, {
+      state: { justCheckedOut: true, paymentId },
     });
   };
 
@@ -145,11 +153,17 @@ export default function Checkout() {
           {isDineIn ? "Detail Dine-in" : "Detail Pesanan Take Away"}
         </h2>
 
-        {/* ✅ tampilkan nama pemesan di sini */}
+        {/* Nama pemesan sebagai field yang bisa diedit */}
         <div className="mb-4">
           <p className="text-gray-700">
             <strong>Nama Pemesan:</strong>{" "}
-            {customerName ? customerName : "—"}
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              placeholder="Masukkan nama pemesan"
+              className="ml-2 px-2 py-1 border rounded"
+            />
           </p>
         </div>
 

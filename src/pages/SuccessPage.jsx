@@ -1,3 +1,4 @@
+// src/pages/SuccessPage.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTimer } from "../context/TimerContext";
@@ -9,15 +10,28 @@ export default function SuccessPage() {
   const { startTimer } = useTimer();
   const { clearCart } = useCart();
 
-  // data yang dikirim dari Checkout:
-  // navigate("/success", { state: { justCheckedOut: true, paymentId } });
-  const { justCheckedOut, paymentId } = location.state || {};
+  // location.state may contain justCheckedOut and paymentId.
+  // Also accept paymentId from query params to support refresh.
+  const { justCheckedOut: stateJustCheckedOut, paymentId: statePaymentId } =
+    location.state || {};
 
   const [payment, setPayment] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getPaymentIdFromUrl = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("paymentId");
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
-    // 1. Kalau bukan datang dari Checkout → balikin ke menu
-    if (!justCheckedOut || !paymentId) {
+    const paymentId = statePaymentId || getPaymentIdFromUrl();
+
+    // 1. Kalau tidak ada paymentId → balikin ke menu
+    if (!paymentId) {
       navigate("/menu", { replace: true });
       return;
     }
@@ -33,6 +47,7 @@ export default function SuccessPage() {
     }
 
     setPayment(found);
+    setLoading(false);
 
     const isDineIn = found.orderType === "dine-in";
 
@@ -59,12 +74,9 @@ export default function SuccessPage() {
       }
     }
 
-    // ========== LOGIKA TUNAI ==========
-    // Untuk CASH:
-    // - Dine-in: tunggu tombol "Kasir sudah menerima pembayaran" → baru startTimer + ke /timer
-    // - Takeaway: tunggu tombol → kemudian hanya balik ke /menu (tanpa timer)
-  }, [justCheckedOut, paymentId, navigate]);  // ⬅️ di sini aja yang diganti
-
+    // Jika CASH: tunggu konfirmasi kasir lewat tombol (lihat render)
+    // Jangan redirect otomatis di sini.
+  }, [location.state]); // re-run bila location.state berubah
 
   // fungsi untuk kasir menandai sudah bayar (CASH)
   const handleKasirSudahBayar = () => {
@@ -103,16 +115,30 @@ export default function SuccessPage() {
     }
   };
 
-  // kalau belum ada data pembayaran (sedang load / langsung akses /success)
-  if (!payment) {
+  // kalau masih loading (menunggu data payment)
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
         <div className="bg-white p-10 rounded-2xl shadow-lg text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Pesanan Anda Berhasil!
           </h2>
+          <p className="text-gray-600 text-lg">Sedang mengambil data pembayaran...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!payment) {
+    // keamanan ekstra — kalau somehow payment null setelah loading
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
+        <div className="bg-white p-10 rounded-2xl shadow-lg text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Data tidak ditemukan
+          </h2>
           <p className="text-gray-600 text-lg">
-            Sedang mengambil data pembayaran...
+            Kami tidak dapat menemukan data pembayaran. Kembali ke halaman menu.
           </p>
         </div>
       </div>
@@ -139,6 +165,10 @@ export default function SuccessPage() {
             <span className="font-mono font-semibold">{payment.id}</span>
           </div>
           <div className="flex justify-between">
+            <span>Nama Pemesan</span>
+            <span className="font-semibold">{payment.customerName || "—"}</span>
+          </div>
+          <div className="flex justify-between">
             <span>Jenis Pesanan</span>
             <span className="font-semibold uppercase">
               {payment.orderType === "dine-in" ? "DINE IN" : "TAKE AWAY"}
@@ -158,9 +188,7 @@ export default function SuccessPage() {
           </div>
           <div className="flex justify-between">
             <span>Metode</span>
-            <span className="font-semibold uppercase">
-              {payment.metodeBayar}
-            </span>
+            <span className="font-semibold uppercase">{payment.metodeBayar}</span>
           </div>
           <div className="flex justify-between">
             <span>Total</span>
@@ -216,9 +244,7 @@ export default function SuccessPage() {
             {payment.statusPembayaran === "LUNAS (CASH)" && (
               <p className="mt-3 text-green-600 text-sm">
                 Pembayaran tunai sudah dikonfirmasi.
-                {isDineIn
-                  ? " Mengarahkan ke halaman timer..."
-                  : " Mengarahkan ke menu..."}
+                {isDineIn ? " Mengarahkan ke halaman timer..." : " Mengarahkan ke menu..."}
               </p>
             )}
           </>

@@ -1,3 +1,4 @@
+// src/pages/MenuUMKM.jsx
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
@@ -81,7 +82,7 @@ function CartContent({
                 </div>
               )}
               <div className="text-sm text-gray-500">
-                Rp{item.harga.toLocaleString("id-ID")} / pcs
+                Rp{item.harga.toLocaleString("id-ID")} / bungkus
               </div>
             </div>
 
@@ -148,7 +149,7 @@ function CartContent({
                 type="date"
                 value={dineInDate}
                 onChange={(e) => setDineInDate(e.target.value)}
-                min={minDate} // GANTI MENGGUNAKAN PROP minDate
+                min={minDate}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-[#3DA3B0]"
               />
             </div>
@@ -245,7 +246,7 @@ export default function MenuUMKM() {
   const [selectedTable, setSelectedTable] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [activeUMKM, setActiveUMKM] = useState(populer[0]?.name || "");
-  const [customerName, setCustomerName] = useState("Warkir");
+  const [customerName, setCustomerName] = useState(""); // jangan paksa "Warkir"
 
   const location = useLocation();
 
