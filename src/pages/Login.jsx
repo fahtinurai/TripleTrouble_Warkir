@@ -6,31 +6,44 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    // 👉 Simulasi user login (kamu bisa ganti dengan API login sebenarnya)
-    const fakeUser = {
-      name: "warkir user",
-      email: "warkir@gmail.com",
-      password: "password123",
-    };
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Simpan user ke global context
-    login(fakeUser);
+  const emailInput = document.getElementById("email").value;
+  const passwordInput = document.getElementById("password").value;
 
-    // 🔥 Ambil pilihan orderType dari localStorage
-    const savedOrderType = localStorage.getItem("orderType") || "dine-in";
-
-    // Arahkan user langsung ke halaman menu dengan pilihan yang sesuai
-    navigate("/menu", { state: { orderType: savedOrderType } });
+  const fakeUser = {
+    name: "warkir user",
+    email: "warkir@gmail.com",
+    password: "password123",
   };
+  if (emailInput !== fakeUser.email || passwordInput !== fakeUser.password) {
+    setErrorMessage("Email atau password salah!");
+    return;
+  }
+
+  login(fakeUser);
+
+  const savedOrderType = localStorage.getItem("orderType") || "dine-in";
+
+  navigate("/menu", { state: { orderType: savedOrderType } });
+};
+
 
   return (
     <>
+      {/* Toast Error message */}
+      {errorMessage && (
+        <div className="fixed top-5 right-5 bg-red-500 text-white px-5 py-3 rounded-lg shadow-lg animate-bounce-once z-50">
+          {errorMessage}
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-800">Login</h1>
