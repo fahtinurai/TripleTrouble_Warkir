@@ -28,11 +28,13 @@ export default function Navbar() {
 
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img
+            <Link to="/">
+              <img
               src={WarkirLogo}
               alt="warkir logo"
               className="w-[150px] h-[50px] object-contain"
             />
+            </Link>
           </div>
 
           {/* Menu center */}
