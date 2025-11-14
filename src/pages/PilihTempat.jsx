@@ -1,16 +1,11 @@
-// src/pages/PilihTempat.jsx
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-/**
- * Props:
- * - onClose: () => void   (wajib saat asModal = true)
- * - asModal: boolean      (true = tampil sebagai popup; false = halaman penuh)
- */
 export default function PilihTempat({ onClose, asModal = false }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  // Tutup dengan tombol Escape saat modal
   useEffect(() => {
     if (!asModal) return;
     const onKey = (e) => {
@@ -20,20 +15,20 @@ export default function PilihTempat({ onClose, asModal = false }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [asModal, onClose]);
 
-  // Fungsi untuk memilih tempat dan simpan pilihan
   const handleSelect = (type) => {
-    // Simpan pilihan pengguna ke localStorage
     localStorage.setItem("orderType", type);
 
-    // Kalau sedang modal, tutup
-    if (asModal) onClose?.();
+    if (!user) {
+      if (asModal) onClose?.();
+      navigate("/login");
+      return;
+    }
 
-    // Arahkan ke halaman login (agar setelah login langsung tahu orderType)
-    navigate("/login");
+    if (asModal) onClose?.();
+    navigate("/menu");
   };
 
   if (!asModal) {
-    // Mode HALAMAN BIASA (route /tempat)
     return (
       <div className="bg-white min-h-screen flex items-center justify-center">
         <div className="container mx-auto px-6 min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-10rem)] flex flex-col items-center justify-center text-center py-12">
@@ -45,7 +40,6 @@ export default function PilihTempat({ onClose, asModal = false }) {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-2xl">
-            {/* DINE IN */}
             <button
               onClick={() => handleSelect("dine-in")}
               className="
@@ -68,7 +62,6 @@ export default function PilihTempat({ onClose, asModal = false }) {
               </span>
             </button>
 
-            {/* TAKE AWAY */}
             <button
               onClick={() => handleSelect("takeaway")}
               className="
@@ -96,7 +89,6 @@ export default function PilihTempat({ onClose, asModal = false }) {
     );
   }
 
-  // Mode MODAL (popup sekali tampil)
   return (
     <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center">
       <div
@@ -111,7 +103,6 @@ export default function PilihTempat({ onClose, asModal = false }) {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {/* DINE IN */}
           <button
             onClick={() => handleSelect("dine-in")}
             className="
@@ -133,7 +124,6 @@ export default function PilihTempat({ onClose, asModal = false }) {
             </span>
           </button>
 
-          {/* TAKE AWAY */}
           <button
             onClick={() => handleSelect("takeaway")}
             className="
