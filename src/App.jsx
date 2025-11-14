@@ -17,6 +17,7 @@ import { AuthProvider } from "./context/AuthContext";
 
 import AuthLayout from "./layouts/AuthLayout";
 import MainLayout from "./layouts/MainLayout";
+import AboutUs from "./pages/AboutUs";
 
 function RequireAuth({ children }) {
   const { user } = useAuth();
@@ -85,6 +86,7 @@ function AppInner() {
 
         <Route element={<MainLayoutRoutes />}>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route
             path="/tempat"
             element={

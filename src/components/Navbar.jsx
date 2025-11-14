@@ -44,17 +44,21 @@ export default function Navbar() {
             </li>
 
             {/* ✅ Hanya tampil kalau user BELUM login */}
-            {!user && (
+            {/* {!user && (
               <li>
                 <Link to="/tempat" className="hover:underline">
                   Pilih Tempat
                 </Link>
               </li>
-            )}
-
+            )} */}
             <li>
               <Link to="/menu" className="hover:underline">
                 Menu UMKM
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className="hover:underline">
+                About Us
               </Link>
             </li>
           </ul>
