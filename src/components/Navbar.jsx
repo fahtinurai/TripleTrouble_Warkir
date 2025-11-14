@@ -10,7 +10,6 @@ export default function Navbar() {
 
   const dropdownRef = useRef(null);
 
-  // Tutup dropdown jika klik luar area
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {

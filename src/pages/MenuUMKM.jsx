@@ -1,63 +1,37 @@
-// src/pages/MenuUMKM.jsx
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { populer } from "../data/toko";
 
-export default function MenuUMKM() {
-  const { items, addItem, decreaseItem, setQty, removeItem, total } = useCart();
+const tableOptions = [
+  "Meja 1 (2 Orang)",
+  "Meja 2 (2 Orang)",
+  "Meja 3 (4 Orang)",
+  "Meja 4 (4 Orang)",
+  "Meja 5 (6 Orang)",
+];
 
-  const [notif, setNotif] = useState("");
-  const [dineInDate, setDineInDate] = useState("");
-  const [dineInTime, setDineInTime] = useState("");
-  const [selectedTable, setSelectedTable] = useState("");
-  const [cartOpen, setCartOpen] = useState(false);
-  const [activeUMKM, setActiveUMKM] = useState(populer[0]?.name || "");
-  const [customerName, setCustomerName] = useState(""); // ⬅️ nama pemesan
-
-  const location = useLocation();
-
-  // ✅ BACA orderType dari state ATAU localStorage agar tetap stabil
-  const orderType =
-    location.state?.orderType || localStorage.getItem("orderType") || "dine-in";
-  const isDineIn = orderType === "dine-in";
-
-  const tableOptions = [
-    "Meja 1 (2 Orang)",
-    "Meja 2 (2 Orang)",
-    "Meja 3 (4 Orang)",
-    "Meja 4 (4 Orang)",
-    "Meja 5 (6 Orang)",
-  ];
-
-  const isReservationComplete = isDineIn
-    ? dineInDate && dineInTime && selectedTable
-    : true;
-
-  const canCheckout = items.length > 0 && isReservationComplete;
-
-  const getTodayDate = () => new Date().toISOString().split("T")[0];
-
-  // tambah item ke keranjang
-  const tambahKeranjang = (menuItem, umkm) => {
-    const itemWithMeta = {
-      nama: menuItem.nama,
-      harga: menuItem.harga,
-      id: `${umkm.name}-${menuItem.nama}`,
-      namaUMKM: umkm.name,
-      kategori: umkm.tag,
-    };
-
-    addItem(itemWithMeta, 1);
-    setNotif(`Ditambahkan: ${menuItem.nama}`);
-    setTimeout(() => setNotif(""), 900);
-  };
-
-  const selectedUMKM =
-    populer.find((u) => u.name === activeUMKM) || populer[0];
-
-  // ➕ komponen isi keranjang (dipakai desktop & mobile)
-  const CartContent = ({ onClose }) => (
+function CartContent({
+  onClose,
+  items,
+  addItem,
+  decreaseItem,
+  setQty,
+  removeItem,
+  total,
+  customerName,
+  setCustomerName,
+  isDineIn,
+  dineInDate,
+  setDineInDate,
+  dineInTime,
+  setDineInTime,
+  selectedTable,
+  setSelectedTable,
+  minDate,
+  canCheckout,
+}) {
+  return (
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-extrabold text-gray-800">
@@ -174,7 +148,7 @@ export default function MenuUMKM() {
                 type="date"
                 value={dineInDate}
                 onChange={(e) => setDineInDate(e.target.value)}
-                min={getTodayDate()}
+                min={minDate} // GANTI MENGGUNAKAN PROP minDate
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:border-[#3DA3B0]"
               />
             </div>
@@ -230,14 +204,14 @@ export default function MenuUMKM() {
             isDineIn
               ? {
                   orderType: "dine-in",
-                  customerName, // ⬅️ kirim nama pemesan
+                  customerName,
                   dineInDate,
                   dineInTime,
                   selectedTable,
                 }
               : {
                   orderType: "takeaway",
-                  customerName, // ⬅️ juga dikirim untuk takeaway
+                  customerName,
                 }
           }
           className={`bg-[#3DA3B0] !text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 ${
@@ -257,6 +231,74 @@ export default function MenuUMKM() {
       </div>
     </>
   );
+}
+
+/**
+ * Komponen Halaman Utama
+ */
+export default function MenuUMKM() {
+  const { items, addItem, decreaseItem, setQty, removeItem, total } = useCart();
+
+  const [notif, setNotif] = useState("");
+  const [dineInDate, setDineInDate] = useState("");
+  const [dineInTime, setDineInTime] = useState("");
+  const [selectedTable, setSelectedTable] = useState("");
+  const [cartOpen, setCartOpen] = useState(false);
+  const [activeUMKM, setActiveUMKM] = useState(populer[0]?.name || "");
+  const [customerName, setCustomerName] = useState("Warkir");
+
+  const location = useLocation();
+
+  const orderType =
+    location.state?.orderType || localStorage.getItem("orderType") || "dine-in";
+  const isDineIn = orderType === "dine-in";
+
+  const isReservationComplete = isDineIn
+    ? dineInDate && dineInTime && selectedTable
+    : true;
+
+  const canCheckout = items.length > 0 && isReservationComplete;
+
+  const getTodayDate = () => new Date().toISOString().split("T")[0];
+  const minDate = getTodayDate(); // Kita hitung sekali di sini
+
+  const tambahKeranjang = (menuItem, umkm) => {
+    const itemWithMeta = {
+      nama: menuItem.nama,
+      harga: menuItem.harga,
+      id: `${umkm.name}-${menuItem.nama}`,
+      namaUMKM: umkm.name,
+      kategori: umkm.tag,
+    };
+
+    addItem(itemWithMeta, 1);
+    setNotif(`Ditambahkan: ${menuItem.nama}`);
+    setTimeout(() => setNotif(""), 900);
+  };
+
+  const selectedUMKM =
+    populer.find((u) => u.name === activeUMKM) || populer[0];
+
+  // Kumpulkan semua props untuk CartContent di satu tempat
+  const cartContentProps = {
+    items,
+    addItem,
+    decreaseItem,
+    setQty,
+    removeItem,
+    total,
+    customerName,
+    setCustomerName,
+    isDineIn,
+    dineInDate,
+    setDineInDate,
+    dineInTime,
+    setDineInTime,
+    selectedTable,
+    setSelectedTable,
+    minDate,
+    canCheckout,
+  };
 
   return (
     <div className="bg-white min-h-screen py-8">
@@ -341,7 +383,7 @@ export default function MenuUMKM() {
           {items.length > 0 && (
             <div className="hidden lg:block lg:w-[360px] xl:w-[400px] sticky top-24 self-start">
               <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <CartContent />
+                <CartContent {...cartContentProps} />
               </div>
             </div>
           )}
@@ -368,7 +410,10 @@ export default function MenuUMKM() {
               onClick={() => setCartOpen(false)}
             />
             <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[75vh] overflow-y-auto p-5">
-              <CartContent onClose={() => setCartOpen(false)} />
+              <CartContent
+                {...cartContentProps}
+                onClose={() => setCartOpen(false)}
+              />
             </div>
           </div>
         )}
