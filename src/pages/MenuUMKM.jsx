@@ -16,7 +16,10 @@ export default function MenuUMKM() {
   const [customerName, setCustomerName] = useState(""); // ⬅️ nama pemesan
 
   const location = useLocation();
-  const orderType = location.state?.orderType || "dine-in";
+
+  // ✅ BACA orderType dari state ATAU localStorage agar tetap stabil
+  const orderType =
+    location.state?.orderType || localStorage.getItem("orderType") || "dine-in";
   const isDineIn = orderType === "dine-in";
 
   const tableOptions = [

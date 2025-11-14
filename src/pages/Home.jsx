@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import HomeHero from "../components/HomeHero";
 
 // ✅ Import data dari src/data/toko.js
@@ -9,6 +9,7 @@ import { populer } from "../data/toko";
 export default function Home() {
   // REF utk slider
   const sliderRef = useRef(null);
+  const [selectedUMKM, setSelectedUMKM] = useState(null);
 
   const scrollSlider = (direction) => {
     const container = sliderRef.current;
@@ -95,12 +96,13 @@ export default function Home() {
                 </div>
 
                 <div className="text-gray-800">
-                  <Link
-                    to="/menu"
+                  {/* 🔥 Tombol Popup Menu */}
+                  <button
+                    onClick={() => setSelectedUMKM(umkm)}
                     className="inline-flex items-center gap-2 bg-teal-600 !text-white text-xs md:text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-teal-700 transition"
                   >
                     Lihat menu
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -282,6 +284,53 @@ export default function Home() {
           </marquee>
         </div>
       </section>
+
+      {/* 🎯 Popup Menu UMKM */}
+      {selectedUMKM && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 relative animate-[fadeIn_0.3s_ease]">
+            <button
+              onClick={() => setSelectedUMKM(null)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+            >
+              ×
+            </button>
+
+            <div className="text-center p-6 border-b">
+              <img
+                src={selectedUMKM.img}
+                alt={selectedUMKM.name}
+                className="w-32 h-32 mx-auto rounded-2xl object-cover mb-3"
+              />
+              <h2 className="text-xl font-bold text-gray-800">
+                {selectedUMKM.name}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {selectedUMKM.tag} • ⭐ {selectedUMKM.rating}
+              </p>
+            </div>
+
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                Daftar Menu
+              </h3>
+              <ul className="divide-y divide-gray-200">
+                {selectedUMKM.menus.map((item, i) => (
+                  <li
+                    key={i}
+                    className="py-3 flex justify-between text-gray-700"
+                  >
+                    <span>{item.nama}</span>
+                    <span className="font-mono font-semibold text-gray-800">
+                      Rp{item.harga.toLocaleString("id-ID")}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

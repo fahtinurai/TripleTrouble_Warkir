@@ -4,30 +4,39 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // 👉 Simulasi user login (kamu bisa ganti dengan API login sebenarnya)
     const fakeUser = {
       name: "warkir user",
       email: "warkir@gmail.com",
       password: "password123",
     };
 
-    login(fakeUser); // simpan ke session & global state
-    navigate("/");
-  }
+    // Simpan user ke global context
+    login(fakeUser);
+
+    // 🔥 Ambil pilihan orderType dari localStorage
+    const savedOrderType = localStorage.getItem("orderType") || "dine-in";
+
+    // Arahkan user langsung ke halaman menu dengan pilihan yang sesuai
+    navigate("/menu", { state: { orderType: savedOrderType } });
+  };
 
   return (
     <>
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold text-gray-800">Login</h1>
-        <p className="text-gray-500 mt-2 text-base">Selamat Datang di Warkir</p>
+        <p className="text-gray-500 mt-2 text-base">
+          Selamat Datang di Warkir
+        </p>
       </div>
 
       {/* Google Login */}
@@ -47,7 +56,10 @@ function Login() {
       <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email
           </label>
           <input
@@ -61,7 +73,10 @@ function Login() {
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <div className="relative mt-2">
@@ -104,7 +119,10 @@ function Login() {
       {/* Footer */}
       <p className="text-center text-gray-600 text-sm mt-6">
         Anda belum terdaftar?{" "}
-        <a href="/register" className="text-teal-600 font-semibold hover:underline">
+        <a
+          href="/register"
+          className="text-teal-600 font-semibold hover:underline"
+        >
           Buat Akun
         </a>
       </p>

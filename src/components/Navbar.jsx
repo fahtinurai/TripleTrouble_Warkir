@@ -37,9 +37,26 @@ export default function Navbar() {
 
           {/* Menu center */}
           <ul className="hidden md:flex items-center gap-12 text-base font-semibold">
-            <li><Link to="/" className="hover:underline">Beranda</Link></li>
-            <li><Link to="/tempat" className="hover:underline">Pilih Tempat</Link></li>
-            <li><Link to="/menu" className="hover:underline">Menu UMKM</Link></li>
+            <li>
+              <Link to="/" className="hover:underline">
+                Beranda
+              </Link>
+            </li>
+
+            {/* ✅ Hanya tampil kalau user BELUM login */}
+            {!user && (
+              <li>
+                <Link to="/tempat" className="hover:underline">
+                  Pilih Tempat
+                </Link>
+              </li>
+            )}
+
+            <li>
+              <Link to="/menu" className="hover:underline">
+                Menu UMKM
+              </Link>
+            </li>
           </ul>
 
           {/* Right section */}
@@ -76,37 +93,21 @@ export default function Navbar() {
                     className="w-10 h-10 rounded-full border-2 border-white object-cover"
                   />
                   <FiChevronDown
-                    className={`transition-transform ${openMenu ? "rotate-180" : ""}`}
+                    className={`transition-transform ${
+                      openMenu ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
 
                 {/* Dropdown */}
                 {openMenu && (
                   <div className="absolute right-0 mt-3 w-56 bg-white text-gray-800 rounded-xl shadow-xl overflow-hidden animate-fadeIn z-50">
-                    
                     <div className="px-4 py-4 border-b border-gray-200">
-                      <p className="font-semibold text-gray-900 text-lg">{user.name}</p>
+                      <p className="font-semibold text-gray-900 text-lg">
+                        {user.name}
+                      </p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
-
-                    {/* <ul className="py-2">
-                      <li>
-                        <Link
-                          to="/profile"
-                          className="block px-4 py-2 hover:bg-gray-100 transition"
-                        >
-                          Lihat Profil
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/settings"
-                          className="block px-4 py-2 hover:bg-gray-100 transition"
-                        >
-                          Pengaturan Akun
-                        </Link>
-                      </li>
-                    </ul> */}
 
                     <button
                       onClick={logout}
@@ -114,12 +115,10 @@ export default function Navbar() {
                     >
                       <FiLogOut /> Logout
                     </button>
-
                   </div>
                 )}
               </div>
             )}
-
           </div>
         </div>
       </nav>
