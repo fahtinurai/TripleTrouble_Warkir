@@ -14,9 +14,9 @@ export default function Home() {
   const [showPilihTempat, setShowPilihTempat] = useState(false);
 
   useEffect(() => {
-    const chosen = localStorage.getItem("hasChosenPlace");
-    if (!chosen) setShowPilihTempat(true);
+    setShowPilihTempat(true);
   }, []);
+
 
 
   const scrollSlider = (direction) => {
