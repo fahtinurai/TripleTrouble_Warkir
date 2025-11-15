@@ -88,17 +88,17 @@ export default function AboutUs() {
               {
                 name: "Ade Fathia Nuraini",
                 role: "Ketua",
-                img: "public/images/ade.jpg",
+                img: "/images/ade.jpg",
               },
               {
                 name: "Muhammad Yaumil Ramadhani",
                 role: "Anggota",
-                img: "public/images/yaumil.jpg",
+                img: "/images/yaumil.jpg",
               },
               {
                 name: "Funny Tio Tinambunan",
                 role: "Anggota",
-                img: "public/images/funny.png",
+                img: "/images/funny.png",
               },
             ].map((person, i) => (
               <motion.div

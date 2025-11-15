@@ -16,7 +16,8 @@ export default function PilihTempat({ onClose, asModal = false }) {
   }, [asModal, onClose]);
 
   const handleSelect = (type) => {
-    localStorage.setItem("orderType", type);
+  localStorage.setItem("orderType", type);
+  localStorage.setItem("hasChosenPlace", "true");
 
     if (!user) {
       if (asModal) onClose?.();
@@ -27,6 +28,7 @@ export default function PilihTempat({ onClose, asModal = false }) {
     if (asModal) onClose?.();
     navigate("/menu");
   };
+
 
   if (!asModal) {
     return (

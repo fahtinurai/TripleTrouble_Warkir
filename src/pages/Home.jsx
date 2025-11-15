@@ -1,15 +1,23 @@
 // src/pages/Home.jsx
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import PilihTempat from "./PilihTempat";
 import HomeHero from "../components/HomeHero";
 
-// ✅ Import data dari src/data/toko.js
+// Import data dari src/data/toko.js
 import { populer } from "../data/toko";
 
 export default function Home() {
   // REF utk slider
   const sliderRef = useRef(null);
   const [selectedUMKM, setSelectedUMKM] = useState(null);
+  const [showPilihTempat, setShowPilihTempat] = useState(false);
+
+  useEffect(() => {
+    const chosen = localStorage.getItem("hasChosenPlace");
+    if (!chosen) setShowPilihTempat(true);
+  }, []);
+
 
   const scrollSlider = (direction) => {
     const container = sliderRef.current;
@@ -28,9 +36,17 @@ export default function Home() {
 
   return (
     <div className="bg-white min-h-screen">
-      <HomeHero />
+      {/* For modals */}
+       {showPilihTempat && (
+        <PilihTempat
+          asModal={true}
+          onClose={() => setShowPilihTempat(false)}
+        />
+      )}
 
-      {/* 🌟 UMKM TERPOPULER – SLIDER */}
+      {/* Home Hero */}
+      <HomeHero />
+      {/* UMKM TERPOPULER SLIDER */}
       <section className="container mx-auto px-6 pt-20 pb-16">
         <div className="text-center mb-6 relative">
           <h2 className="text-2xl md:text-3xl font-bold text-teal-800">
@@ -110,7 +126,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 🌈 Minggu Spesial UMKM */}
+      {/* Minggu Spesial UMKM */}
       <section className="w-full mt-16">
         <div className="relative bg-gradient-to-r from-[#338595] via-[#2e6d7d] to-[#338595] text-white py-20 overflow-hidden">
           <div className="absolute inset-0 opacity-10 bg-[url('/images/pattern.svg')] bg-cover"></div>
@@ -200,7 +216,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 💬 Testimoni */}
+        {/* Testimoni */}
         <div className="relative w-full bg-white py-24">
           <div className="absolute top-0 w-full overflow-hidden leading-none rotate-180">
             <svg
@@ -285,7 +301,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 🎯 Popup Menu UMKM */}
+      {/* Popup Menu UMKM */}
       {selectedUMKM && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 relative animate-[fadeIn_0.3s_ease]">
@@ -332,5 +348,6 @@ export default function Home() {
         </div>
       )}
     </div>
+    
   );
 }
