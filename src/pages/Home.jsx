@@ -14,9 +14,8 @@ export default function Home() {
   const [showPilihTempat, setShowPilihTempat] = useState(false);
 
   useEffect(() => {
-    setShowPilihTempat(true);
+     setShowPilihTempat(true);
   }, []);
-
 
 
   const scrollSlider = (direction) => {
